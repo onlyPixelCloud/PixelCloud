@@ -6,11 +6,15 @@ import de.haizon.pixelcloud.master.backend.database.functions.DatabaseTemplateFu
 import de.haizon.pixelcloud.master.backend.dependency.DependencyLoader;
 import de.haizon.pixelcloud.master.backend.files.FileManager;
 import de.haizon.pixelcloud.master.backend.rest.RestServer;
+import de.haizon.pixelcloud.master.backend.runner.CloudServiceRunner;
+import de.haizon.pixelcloud.master.backend.versions.VersionFetcher;
 import de.haizon.pixelcloud.master.console.ConsoleManager;
 import de.haizon.pixelcloud.master.console.command.CommandManager;
 import de.haizon.pixelcloud.master.console.sender.ConsoleSender;
 import de.haizon.pixelcloud.master.console.setups.DatabaseSetup;
 import de.haizon.pixelcloud.master.console.setups.SetupBuilder;
+import de.haizon.pixelcloud.master.functions.CloudGroupFunctions;
+import de.haizon.pixelcloud.master.functions.CloudServiceFunctions;
 import de.haizon.pixelcloud.master.logger.CloudLogger;
 import de.haizon.pixelcloud.master.template.TemplateManager;
 import de.haizon.pixelcloud.master.wrapper.WrapperManager;
@@ -43,6 +47,10 @@ public class CloudMaster {
     private DatabaseTemplateFunction databaseTemplateFunction;
 
     private TemplateManager templateManager;
+    private VersionFetcher versionFetcher;
+    private CloudGroupFunctions cloudGroupFunctions;
+    private CloudServiceFunctions cloudServiceFunctions;
+    private CloudServiceRunner cloudServiceRunner;
 
     public static void main(String[] args) {
         new CloudMaster();
@@ -94,7 +102,24 @@ public class CloudMaster {
         templateManager = new TemplateManager();
         templateManager.fetch();
 
+        fileManager.deleteFiles(new File("storage/servers/temp"));
+
         wrapperManager = new WrapperManager();
+
+        versionFetcher = new VersionFetcher();
+        versionFetcher.fetch();
+
+        cloudServiceRunner = new CloudServiceRunner();
+
+        cloudGroupFunctions = new CloudGroupFunctions();
+        cloudGroupFunctions.fetch();
+
+        cloudServiceFunctions = new CloudServiceFunctions();
+        cloudServiceFunctions.fetch();
+
+        cloudServiceRunner.startAll();
+
+
 
 //        new RestServer();
 
@@ -106,6 +131,22 @@ public class CloudMaster {
 
     public void setDatabaseTemplateFunction(DatabaseTemplateFunction databaseTemplateFunction) {
         this.databaseTemplateFunction = databaseTemplateFunction;
+    }
+
+    public CloudServiceFunctions getCloudServiceFunctions() {
+        return cloudServiceFunctions;
+    }
+
+    public CloudServiceRunner getCloudServiceRunner() {
+        return cloudServiceRunner;
+    }
+
+    public CloudGroupFunctions getCloudGroupFunctions() {
+        return cloudGroupFunctions;
+    }
+
+    public VersionFetcher getVersionFetcher() {
+        return versionFetcher;
     }
 
     public TemplateManager getTemplateManager() {

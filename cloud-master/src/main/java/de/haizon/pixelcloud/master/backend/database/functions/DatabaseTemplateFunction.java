@@ -63,6 +63,14 @@ public class DatabaseTemplateFunction {
         this.databaseAdapter.executeUpdate("INSERT INTO module_templates (uniqueId, name, type) VALUES ('" + uuid + "', '" + name + "', '" + templateType.name() + "');");
 
         CloudMaster.getInstance().getCloudLogger().info("The template " + Color.RED.getColor() + name + Color.RESET.getColor() + " was created successfully!");
+
+        if (!templateType.equals(TemplateType.STATIC)) {
+            CloudMaster.getInstance().getFileManager().createFolder("storage/servers/templates/" + name);
+
+            
+
+        }
+
     }
 
 }

@@ -24,6 +24,17 @@ public class CreateCommand implements ICommandHandler {
 
         if (args[0].equalsIgnoreCase("create")) {
 
+            if(args.length != 2){
+                sender.sendMessage(" ");
+                sender.sendMessage("Please use one of the following commands");
+                sender.sendMessage(" ");
+                getSuggestions().forEach(candidate -> {
+                    sender.sendMessage("create " + candidate.value());
+                });
+                sender.sendMessage(" ");
+                return;
+            }
+
             switch (args[1]) {
                 case "template" -> {
                     new TemplateSetup();
@@ -39,7 +50,7 @@ public class CreateCommand implements ICommandHandler {
 
     @Override
     public List<Candidate> getSuggestions() {
-        return Arrays.asList(new Candidate("template"), new Candidate("service"));
+        return Arrays.asList(new Candidate("template"), new Candidate("group"));
     }
 
 }

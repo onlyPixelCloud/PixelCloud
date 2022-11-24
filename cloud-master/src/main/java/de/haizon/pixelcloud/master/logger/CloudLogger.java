@@ -84,7 +84,7 @@ public class CloudLogger extends Logger implements ICloudLogger {
 
     private void write(LogType logType, String message){
         Date date = new Date();
-        String format = Color.toColoredString("§r[" + new SimpleDateFormat("HH:mm:ss").format(date) + " | " + logType.getColor().getColor() + logType.getDisplay()+ Color.RESET.getColor() + "]" + Color.RESET.getColor() + " §r»§r " + message);
+        String format = Color.toColoredString("§r[" + new SimpleDateFormat("HH:mm:ss").format(date) + " | " + logType.getColor().getColor() + logType.getDisplay() + Color.RESET.getColor() + "]" + " §r»§r " + message);
 
         LineReader lineReader = CloudMaster.getInstance().getConsoleManager().getLineReader();
         lineReader.getTerminal().puts(InfoCmp.Capability.carriage_return);

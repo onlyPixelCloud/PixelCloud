@@ -62,6 +62,10 @@ public class SetupBuilder {
         getCurrentSetup().setCurrentInput(currentInput);
     }
 
+    public void cancel(){
+
+    }
+
     public ISetup getCurrentSetup() {
         return currentSetup;
     }

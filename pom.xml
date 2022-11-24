@@ -11,6 +11,7 @@
     <modules>
         <module>cloud-api</module>
         <module>cloud-master</module>
+        <module>cloud-plugin</module>
     </modules>
 
     <properties>

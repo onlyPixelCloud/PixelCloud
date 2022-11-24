@@ -77,6 +77,9 @@ public class ConsoleManager {
         SetupBuilder setupBuilder = CloudMaster.getInstance().getSetupBuilder();
 
         if(setupBuilder.getCurrentSetup() != null){
+            if(input.equalsIgnoreCase("end")){
+                setupBuilder.cancel();
+            }
             setupBuilder.nextQuestion(setupBuilder.getCurrentSetup().getCurrentInput().handle(input));
             return;
         }

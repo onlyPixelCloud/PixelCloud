@@ -1,6 +1,7 @@
 package de.haizon.pixelcloud.master.console.setups;
 
 import de.haizon.pixelcloud.api.services.version.GroupType;
+import de.haizon.pixelcloud.api.services.version.IGroupVersion;
 import de.haizon.pixelcloud.master.CloudMaster;
 import de.haizon.pixelcloud.master.console.setups.abstracts.SetupEnd;
 import de.haizon.pixelcloud.master.console.setups.abstracts.SetupInput;
@@ -9,6 +10,7 @@ import de.haizon.pixelcloud.master.console.setups.interfaces.ISetup;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * JavaDoc this file!
@@ -132,9 +134,11 @@ public class GroupSetup extends ISetup {
             @Override
             public List<String> getSuggestions() {
                 List<String> values = new ArrayList<>();
-                CloudMaster.getInstance().getVersionFetcher().getFetchedVersions().forEach(iGroupVersion -> {
-                    if(iGroupVersion.getType().equals(groupType)) values.add(iGroupVersion.getName());
-                });
+                if (Objects.equals(Arrays.stream(GroupType.values()).filter(type -> type.name().equalsIgnoreCase(groupType.name())).findAny().orElse(null), GroupType.LOBBY)) {
+                    values.addAll(getGroupVersions(GroupType.SERVER));
+                } else {
+                    values.addAll(getGroupVersions(Arrays.stream(GroupType.values()).filter(type -> type.name().equalsIgnoreCase(groupType.name())).findAny().orElse(null)));
+                }
                 return values;
             }
 
@@ -145,6 +149,16 @@ public class GroupSetup extends ISetup {
             }
         });
 
+    }
+
+    public List<String> getGroupVersions(GroupType groupType){
+        List<String> groupVersions = new ArrayList<>();
+        for(IGroupVersion groupVersion : CloudMaster.getInstance().getVersionFetcher().getFetchedVersions()){
+            if(groupVersion.getType().equals(groupType)){
+                groupVersions.add(groupVersion.getName());
+            }
+        }
+        return groupVersions;
     }
 
 }

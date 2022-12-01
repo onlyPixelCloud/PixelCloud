@@ -15,11 +15,6 @@ import java.util.UUID;
 public interface ICloudGroup {
 
     /**
-     * Returns the uuid of the group
-     */
-    UUID getUUID();
-
-    /**
      * Returns the name of the group. e.g. Proxy
      */
     String getName();

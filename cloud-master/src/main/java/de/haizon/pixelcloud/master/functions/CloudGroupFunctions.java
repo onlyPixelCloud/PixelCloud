@@ -35,7 +35,6 @@ public class CloudGroupFunctions {
             try {
                 while (resultSet.next()) {
 
-                    UUID uuid = UUID.fromString(resultSet.getString("uniqueId"));
                     String name = resultSet.getString("name");
                     String template = resultSet.getString("template");
                     String type = resultSet.getString("type");
@@ -48,10 +47,6 @@ public class CloudGroupFunctions {
                     boolean maintenance = Boolean.parseBoolean(resultSet.getString("maintenance"));
 
                     cloudGroups.add(new ICloudGroup() {
-                        @Override
-                        public UUID getUUID() {
-                            return uuid;
-                        }
 
                         @Override
                         public String getName() {

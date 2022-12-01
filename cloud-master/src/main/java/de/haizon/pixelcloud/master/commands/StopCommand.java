@@ -23,7 +23,7 @@ public class StopCommand implements ICommandHandler {
 
             iCommandSender.sendMessage("The cloud is stopping...");
 
-
+            CloudMaster.getInstance().getCloudServiceRunner().getRunningServices().forEach((cloudService, process) -> CloudMaster.getInstance().getCloudServiceRunner().shutdown(cloudService));
 
             CloudMaster.getInstance().getConsoleManager().stopThread();
             System.exit(1);

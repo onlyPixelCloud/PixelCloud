@@ -1,5 +1,6 @@
 package de.haizon.pixelcloud.master.backend.files;
 
+import de.haizon.pixelcloud.master.CloudMaster;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -83,12 +84,14 @@ public class FileManager {
         }
     }
 
-    public boolean copyFile(String from, String to){
+    public void copyFile(String from, String to){
         try {
+            if(new File(to).exists()){
+                new File(to).delete();
+            }
             Files.copy(new File(from).toPath(), new File(to).toPath());
-            return true;
-        } catch (IOException ignored) {
-            return false;
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
     }
 

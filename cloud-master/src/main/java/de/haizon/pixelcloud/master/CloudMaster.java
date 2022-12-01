@@ -5,6 +5,8 @@ import de.haizon.pixelcloud.master.backend.database.functions.DatabaseGroupFunct
 import de.haizon.pixelcloud.master.backend.database.functions.DatabaseTemplateFunction;
 import de.haizon.pixelcloud.master.backend.dependency.DependencyLoader;
 import de.haizon.pixelcloud.master.backend.files.FileManager;
+import de.haizon.pixelcloud.master.backend.packets.PacketFunction;
+import de.haizon.pixelcloud.master.backend.packets.functions.PacketReceiveServiceOnlineFunction;
 import de.haizon.pixelcloud.master.backend.rest.RestServer;
 import de.haizon.pixelcloud.master.backend.runner.CloudServiceRunner;
 import de.haizon.pixelcloud.master.backend.versions.VersionFetcher;
@@ -46,11 +48,13 @@ public class CloudMaster {
     private DatabaseGroupFunction databaseGroupFunction;
     private DatabaseTemplateFunction databaseTemplateFunction;
 
-    private TemplateManager templateManager;
-    private VersionFetcher versionFetcher;
-    private CloudGroupFunctions cloudGroupFunctions;
-    private CloudServiceFunctions cloudServiceFunctions;
-    private CloudServiceRunner cloudServiceRunner;
+    private final TemplateManager templateManager;
+    private final VersionFetcher versionFetcher;
+    private final CloudGroupFunctions cloudGroupFunctions;
+    private final CloudServiceFunctions cloudServiceFunctions;
+    private final CloudServiceRunner cloudServiceRunner;
+
+    private final PacketFunction packetFunction;
 
     public static void main(String[] args) {
         new CloudMaster();
@@ -119,7 +123,9 @@ public class CloudMaster {
 
         cloudServiceRunner.startAll();
 
+        packetFunction = new PacketFunction();
 
+        packetFunction.registerPacketReceiver(new PacketReceiveServiceOnlineFunction());
 
 //        new RestServer();
 
@@ -131,6 +137,10 @@ public class CloudMaster {
 
     public void setDatabaseTemplateFunction(DatabaseTemplateFunction databaseTemplateFunction) {
         this.databaseTemplateFunction = databaseTemplateFunction;
+    }
+
+    public PacketFunction getPacketFunction() {
+        return packetFunction;
     }
 
     public CloudServiceFunctions getCloudServiceFunctions() {

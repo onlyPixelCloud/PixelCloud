@@ -9,6 +9,7 @@ package de.haizon.pixelcloud.api.services.version;
 public enum GroupType {
 
     PROXY,
-    SERVER
+    SERVER,
+    LOBBY
 
 }

@@ -1,0 +1,9 @@
+{
+  "id": "cloud_plugin",
+  "name": "CloudPlugin",
+  "authors": [
+    "Haizoooon"
+  ],
+  "version": "1.0.0",
+  "main": "de.haizon.pixelcloud.bootstrap.velocity.VelocityBootstrap"
+}

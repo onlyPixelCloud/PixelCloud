@@ -28,11 +28,6 @@ public interface ICloudService {
     int getServiceId();
 
     /**
-     * Returns the uniqueId from the service
-     */
-    UUID getUniqueId();
-
-    /**
      * Returns the service name
      */
     String getName();

@@ -1,6 +1,8 @@
 package de.haizon.pixelcloud.master.backend.runner;
 
+import de.haizon.pixelcloud.api.console.Color;
 import de.haizon.pixelcloud.api.group.ICloudGroup;
+import de.haizon.pixelcloud.api.packets.PacketType;
 import de.haizon.pixelcloud.api.services.ICloudService;
 import de.haizon.pixelcloud.api.services.status.CloudServiceStatus;
 import de.haizon.pixelcloud.api.template.TemplateType;
@@ -49,10 +51,12 @@ public class CloudServiceRunner {
 
         configureService(cloudService);
 
+        cloudService.setStatus(CloudServiceStatus.STARTING);
+
         switch (cloudService.getCloudGroup().getTemplate().getTemplateType()){
             case STATIC -> {
 
-                CloudMaster.getInstance().getFileManager().createFolder("storage/servers/static/" + cloudService.getName());
+                CloudMaster.getInstance().getFileManager().createFolder("storage/servers/static/" + cloudService.getName() + "/plugins");
 
                 JsonLib jsonLib = JsonLib.empty();
                 jsonLib.append("name", cloudService.getName());
@@ -65,25 +69,29 @@ public class CloudServiceRunner {
                     CloudMaster.getInstance().getFileManager().copyFile("storage/jars/" + cloudService.getCloudGroup().getGroupVersion().getName() + ".jar", "storage/servers/static/" + cloudService.getName() + "/" + cloudService.getCloudGroup().getGroupVersion().getName() + ".jar");
                 }
 
+                copyPlugin(cloudService);
+
                 process = createProcessBuilder(cloudService).directory(new File("storage/servers/static/" + cloudService.getName())).start();
 
             }
             case DYNAMIC -> {
 
-                CloudMaster.getInstance().getFileManager().createFolder("storage/servers/temp/" + cloudService.getName() + "@" + cloudService.getUniqueId());
+                CloudMaster.getInstance().getFileManager().createFolder("storage/servers/temp/" + cloudService.getName() + "/plugins");
 
                 JsonLib jsonLib = JsonLib.empty();
                 jsonLib.append("name", cloudService.getName());
                 jsonLib.append("id", cloudService.getServiceId());
                 jsonLib.append("type", cloudService.getCloudGroup().getGroupType());
                 jsonLib.append("port", cloudService.getPort());
-                jsonLib.saveAsFile(new File("storage/servers/temp/" + cloudService.getName() + "@" + cloudService.getUniqueId(), "cloud_identify.json"));
+                jsonLib.saveAsFile(new File("storage/servers/temp/" + cloudService.getName() , "cloud_identify.json"));
 
-                if(!CloudMaster.getInstance().getFileManager().fileExist("storage/servers/temp/" + cloudService.getName() + "@" + cloudService.getUniqueId(), cloudService.getCloudGroup().getGroupVersion().getName() + ".jar")){
-                    CloudMaster.getInstance().getFileManager().copyFile("storage/jars/" + cloudService.getCloudGroup().getGroupVersion().getName() + ".jar", "storage/servers/temp/" + cloudService.getName() + "@" + cloudService.getUniqueId() + "/" + cloudService.getCloudGroup().getGroupVersion().getName() + ".jar");
+                if(!CloudMaster.getInstance().getFileManager().fileExist("storage/servers/temp/" + cloudService.getName() , cloudService.getCloudGroup().getGroupVersion().getName() + ".jar")){
+                    CloudMaster.getInstance().getFileManager().copyFile("storage/jars/" + cloudService.getCloudGroup().getGroupVersion().getName() + ".jar", "storage/servers/temp/" + cloudService.getName()  + "/" + cloudService.getCloudGroup().getGroupVersion().getName() + ".jar");
                 }
 
-                process = createProcessBuilder(cloudService).directory(new File("storage/servers/temp/" + cloudService.getName() + "@" + cloudService.getUniqueId())).start();
+                copyPlugin(cloudService);
+
+                process = createProcessBuilder(cloudService).directory(new File("storage/servers/temp/" + cloudService.getName() )).start();
 
             }
         }
@@ -111,9 +119,7 @@ public class CloudServiceRunner {
 
                     cloudService.getConsoleMessages().add(string);
 
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                } catch (IOException ignored) {}
             }
 
             try {
@@ -137,9 +143,19 @@ public class CloudServiceRunner {
 
     public void shutdown(ICloudService cloudService){
 
+        CloudMaster.getInstance().getCloudLogger().info("Service " + Color.RED.getColor() + cloudService.getName() + Color.RESET.getColor() + " trying to stop...");
+
         executeCommand(cloudService, "end");
         executeCommand(cloudService, "stop");
 
+        if(cloudService.getServiceStatus().equals(CloudServiceStatus.STARTING)){
+            getRunningServices().get(cloudService).destroy();
+        }
+
+    }
+
+    public void copyPlugin(ICloudService cloudService){
+        CloudMaster.getInstance().getFileManager().copyFile("storage/jars/cloud-plugin-1.0-SNAPSHOT-shaded.jar", "storage/servers/" + (cloudService.getCloudGroup().getTemplate().getTemplateType().equals(TemplateType.STATIC) ? "static/" + cloudService.getName() + "/plugins/cloud-plugin-1.0-SNAPSHOT-shaded.jar" : "temp/" + cloudService.getName()  + "/plugins/cloud-plugin-1.0-SNAPSHOT-shaded.jar"));
     }
 
     public void executeCommand(ICloudService cloudService, String command) {
@@ -156,12 +172,13 @@ public class CloudServiceRunner {
     }
 
     public void configureService(ICloudService cloudService){
+
         if (cloudService.getCloudGroup().getGroupVersion().getName().contains("VELOCITY")) {
             DefaultVelocityConfiguration defaultVelocityConfiguration = new DefaultVelocityConfiguration();
-            defaultVelocityConfiguration.configure(cloudService, new File("storage/servers/" + (cloudService.getCloudGroup().getTemplate().getTemplateType().equals(TemplateType.STATIC) ? "static/" + cloudService.getName() : "temp/" + cloudService.getName() + "@" + cloudService.getUniqueId())));
+            defaultVelocityConfiguration.configure(cloudService, new File("storage/servers/" + (cloudService.getCloudGroup().getTemplate().getTemplateType().equals(TemplateType.STATIC) ? "static/" + cloudService.getName() : "temp/" + cloudService.getName() )));
         } else {
             DefaultSpigotConfiguration defaultSpigotConfiguration = new DefaultSpigotConfiguration();
-            defaultSpigotConfiguration.configure(cloudService, new File("storage/servers/" + (cloudService.getCloudGroup().getTemplate().getTemplateType().equals(TemplateType.STATIC) ? "static/" + cloudService.getName() : "temp/" + cloudService.getName() + "@" + cloudService.getUniqueId())));
+            defaultSpigotConfiguration.configure(cloudService, new File("storage/servers/" + (cloudService.getCloudGroup().getTemplate().getTemplateType().equals(TemplateType.STATIC) ? "static/" + cloudService.getName() : "temp/" + cloudService.getName() )));
         }
     }
 

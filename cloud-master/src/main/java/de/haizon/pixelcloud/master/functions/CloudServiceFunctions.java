@@ -38,7 +38,6 @@ public class CloudServiceFunctions {
 
                     private CloudServiceStatus cloudServiceStatus = CloudServiceStatus.STOPPED;
                     private final CopyOnWriteArrayList<String> copyOnWriteArrayList = new CopyOnWriteArrayList<>();
-                    private final UUID uuid = UUID.randomUUID();
 
                     @Override
                     public String getGroupName() {
@@ -48,11 +47,6 @@ public class CloudServiceFunctions {
                     @Override
                     public int getServiceId() {
                         return finalI;
-                    }
-
-                    @Override
-                    public UUID getUniqueId() {
-                        return uuid;
                     }
 
                     @Override
@@ -117,7 +111,7 @@ public class CloudServiceFunctions {
                     }
                 };
 
-                CloudMaster.getInstance().getCloudLogger().info("Service " + cloudService.getName() + " was registered [" + cloudService.getUniqueId() + "/" + cloudService.getCloudGroup().getName() + "]");
+                CloudMaster.getInstance().getCloudLogger().info("Service " + cloudService.getName() + " was registered [" + cloudService.getCloudGroup().getName() + "]");
 
                 cloudServices.add(cloudService);
 

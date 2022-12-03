@@ -1,6 +1,7 @@
 package de.haizon.pixelcloud.master.backend.database.functions;
 
 import de.haizon.pixelcloud.api.console.Color;
+import de.haizon.pixelcloud.api.services.impl.TemplateImpl;
 import de.haizon.pixelcloud.api.template.ITemplate;
 import de.haizon.pixelcloud.api.template.TemplateType;
 import de.haizon.pixelcloud.master.CloudMaster;
@@ -41,22 +42,7 @@ public class DatabaseTemplateFunction {
     public void createTemplate(String name, TemplateType templateType){
         UUID uuid = UUID.randomUUID();
 
-        ITemplate template = new ITemplate() {
-            @Override
-            public UUID getUniqueId() {
-                return uuid;
-            }
-
-            @Override
-            public String getName() {
-                return name;
-            }
-
-            @Override
-            public TemplateType getTemplateType() {
-                return templateType;
-            }
-        };
+        TemplateImpl template = new TemplateImpl(uuid.toString(), name, templateType);
 
         CloudMaster.getInstance().getTemplateManager().getTemplates().add(template);
 
@@ -66,8 +52,6 @@ public class DatabaseTemplateFunction {
 
         if (!templateType.equals(TemplateType.STATIC)) {
             CloudMaster.getInstance().getFileManager().createFolder("storage/servers/templates/" + name);
-
-            
 
         }
 

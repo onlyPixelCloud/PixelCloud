@@ -21,9 +21,20 @@ public class DefaultSpigotConfiguration implements IServiceConfiguration {
 
         File newFile = new File(file, "server.properties");
 
-        if(!newFile.exists()){
-            CloudMaster.getInstance().getFileManager().copyFileOutOfJar(newFile, "/files/server.properties");
-        }
+        File spigotYaml = new File(file, "spigot.yml");
+
+        File bukkitYaml = new File(file, "bukkit.yml");
+
+        if(spigotYaml.exists()) spigotYaml.delete();
+
+        if(newFile.exists()) newFile.delete();
+
+        if(bukkitYaml.exists()) bukkitYaml.delete();
+
+        CloudMaster.getInstance().getFileManager().copyFileOutOfJar(newFile, "/files/server.properties");
+        CloudMaster.getInstance().getFileManager().copyFileOutOfJar(spigotYaml, "/files/spigot.yml");
+        CloudMaster.getInstance().getFileManager().copyFileOutOfJar(bukkitYaml, "/files/bukkit.yml");
+
 
         ICloudGroup cloudGroup = CloudMaster.getInstance().getCloudGroupFunctions().getCloudGroups().stream().filter(iCloudGroup -> iCloudGroup.getName().equalsIgnoreCase(cloudService.getGroupName())).findAny().orElse(null);
 

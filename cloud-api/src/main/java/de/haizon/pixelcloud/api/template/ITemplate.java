@@ -1,7 +1,5 @@
 package de.haizon.pixelcloud.api.template;
 
-import java.util.UUID;
-
 /**
  * JavaDoc this file!
  * Created: 22.11.2022
@@ -10,7 +8,7 @@ import java.util.UUID;
  */
 public interface ITemplate {
 
-    UUID getUniqueId();
+    String getUniqueId();
 
     String getName();
 

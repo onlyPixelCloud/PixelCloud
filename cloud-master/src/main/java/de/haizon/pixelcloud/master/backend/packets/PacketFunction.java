@@ -4,9 +4,13 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
+import de.haizon.pixelcloud.api.group.ICloudGroup;
+import de.haizon.pixelcloud.api.packets.CloudPacket;
 import de.haizon.pixelcloud.api.packets.Packet;
 import de.haizon.pixelcloud.api.packets.abstracts.PacketReceiveFunction;
+import de.haizon.pixelcloud.api.services.ICloudService;
 import de.haizon.pixelcloud.master.CloudMaster;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,6 +36,9 @@ public class PacketFunction {
         server.start();
         try {
             server.bind(4020, 4080);
+
+            CloudMaster.getInstance().getCloudLogger().success("Cloud is bound to port §c4020 §rand §c4080");
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -39,6 +46,7 @@ public class PacketFunction {
         kryo.setRegistrationRequired(false);
 
         server.addListener(new Listener(){
+
             @Override
             public void received(Connection connection, Object object) {
 
@@ -63,8 +71,10 @@ public class PacketFunction {
         return functions;
     }
 
-    public void sendPacket(Packet packet){
+    public void sendPacket(CloudPacket<?> cloudPacket){
+        Packet packet = new Packet();
+        packet.id = cloudPacket.getId();
+        packet.content = cloudPacket.getContent();
         server.sendToAllTCP(packet);
     }
-
 }

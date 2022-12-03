@@ -6,9 +6,12 @@ import de.haizon.pixelcloud.master.backend.database.functions.DatabaseTemplateFu
 import de.haizon.pixelcloud.master.backend.dependency.DependencyLoader;
 import de.haizon.pixelcloud.master.backend.files.FileManager;
 import de.haizon.pixelcloud.master.backend.packets.PacketFunction;
+import de.haizon.pixelcloud.master.backend.packets.functions.PacketINPlayerConnected;
+import de.haizon.pixelcloud.master.backend.packets.functions.PacketInAndOutSendBackToClient;
 import de.haizon.pixelcloud.master.backend.packets.functions.PacketReceiveServiceOnlineFunction;
 import de.haizon.pixelcloud.master.backend.rest.RestServer;
 import de.haizon.pixelcloud.master.backend.runner.CloudServiceRunner;
+import de.haizon.pixelcloud.master.backend.runner.CloudServiceStartQueue;
 import de.haizon.pixelcloud.master.backend.versions.VersionFetcher;
 import de.haizon.pixelcloud.master.console.ConsoleManager;
 import de.haizon.pixelcloud.master.console.command.CommandManager;
@@ -53,6 +56,7 @@ public class CloudMaster {
     private final CloudGroupFunctions cloudGroupFunctions;
     private final CloudServiceFunctions cloudServiceFunctions;
     private final CloudServiceRunner cloudServiceRunner;
+    private final CloudServiceStartQueue cloudServiceStartQueue;
 
     private final PacketFunction packetFunction;
 
@@ -110,10 +114,13 @@ public class CloudMaster {
 
         wrapperManager = new WrapperManager();
 
+        packetFunction = new PacketFunction();
+
         versionFetcher = new VersionFetcher();
         versionFetcher.fetch();
 
         cloudServiceRunner = new CloudServiceRunner();
+        cloudServiceStartQueue = new CloudServiceStartQueue();
 
         cloudGroupFunctions = new CloudGroupFunctions();
         cloudGroupFunctions.fetch();
@@ -123,9 +130,9 @@ public class CloudMaster {
 
         cloudServiceRunner.startAll();
 
-        packetFunction = new PacketFunction();
-
         packetFunction.registerPacketReceiver(new PacketReceiveServiceOnlineFunction());
+        packetFunction.registerPacketReceiver(new PacketINPlayerConnected());
+        packetFunction.registerPacketReceiver(new PacketInAndOutSendBackToClient());
 
 //        new RestServer();
 
@@ -137,6 +144,10 @@ public class CloudMaster {
 
     public void setDatabaseTemplateFunction(DatabaseTemplateFunction databaseTemplateFunction) {
         this.databaseTemplateFunction = databaseTemplateFunction;
+    }
+
+    public CloudServiceStartQueue getCloudServiceStartQueue() {
+        return cloudServiceStartQueue;
     }
 
     public PacketFunction getPacketFunction() {

@@ -3,16 +3,10 @@ package de.haizon.pixelcloud.implementation;
 import de.haizon.pixelcloud.api.group.ICloudGroup;
 import de.haizon.pixelcloud.api.packets.Packet;
 import de.haizon.pixelcloud.api.packets.abstracts.PacketReceiveFunction;
-import de.haizon.pixelcloud.api.services.version.GroupType;
-import de.haizon.pixelcloud.api.services.version.IGroupVersion;
-import de.haizon.pixelcloud.api.template.ITemplate;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import de.haizon.pixelcloud.api.services.impl.CloudGroupImpl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * JavaDoc this file!
@@ -22,11 +16,10 @@ import java.util.UUID;
  */
 public class CloudGroupImplementation extends PacketReceiveFunction {
 
-    private final List<ICloudGroup> cloudGroups;
+    private static final List<ICloudGroup> cloudGroups = new ArrayList<>();
 
     public CloudGroupImplementation() {
         super("receive_group");
-        this.cloudGroups = new ArrayList<>();
     }
 
     public List<ICloudGroup> getCloudGroups() {
@@ -36,11 +29,16 @@ public class CloudGroupImplementation extends PacketReceiveFunction {
     @Override
     public void received(Packet packet) {
 
-        if(packet.cloudGroup == null) return;
+        if(packet.content instanceof CloudGroupImpl){
+            ICloudGroup cloudGroup = (ICloudGroup) packet.content;
 
-        ICloudGroup cloudGroup = packet.cloudGroup;
+            if(cloudGroups.stream().anyMatch(cloudService1 -> cloudService1.getName().equalsIgnoreCase(cloudGroup.getName()))) {
+                cloudGroups.remove(cloudGroups.stream().filter(cloudService1 -> cloudService1.getName().equalsIgnoreCase(cloudGroup.getName())).findAny().orElse(null));
+            }
 
-        if(!cloudGroups.contains(cloudGroup)) cloudGroups.add(cloudGroup);
+            cloudGroups.add(cloudGroup);
+
+        }
 
     }
 

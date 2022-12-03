@@ -5,6 +5,7 @@ import de.haizon.pixelcloud.api.commands.ICommandHandler;
 import de.haizon.pixelcloud.master.commands.*;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +22,7 @@ public class CommandManager {
     public CommandManager() {
         this.commandHandlers = new HashMap<>();
 
-        register(HelpCommand.class, CreateCommand.class, ClearCommand.class, StopCommand.class, ScreenCommand.class);
+        register(HelpCommand.class, CreateCommand.class, ClearCommand.class, StopCommand.class, ScreenCommand.class, ServiceCommand.class);
     }
 
     @SafeVarargs
@@ -38,7 +39,7 @@ public class CommandManager {
     }
 
     public ICommandHandler getCommandHandlerByName(String command) {
-        return commandHandlers.get(commandHandlers.keySet().stream().filter(command1 -> command1.name().equalsIgnoreCase(command)).findAny().orElse(null));
+        return commandHandlers.get(commandHandlers.keySet().stream().filter(command1 -> command1.name().equalsIgnoreCase(command) || Arrays.stream(command1.aliases()).toList().contains(command)).findAny().orElse(null));
     }
 
     public Map<Command, ICommandHandler> getCommandHandlers() {

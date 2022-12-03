@@ -36,17 +36,9 @@ public interface ICloudPlayer {
 
     ICloudService getConnectedProxy();
 
-    String getConnectedProxyName();
-
     ICloudService getConnectedService();
 
-    String getConnectedServiceName();
-
     JSONObject getProperties();
-
-    Map<String, Object> getPropertiesMap();
-
-    Object getProperty();
 
     UUID getUniqueId();
 

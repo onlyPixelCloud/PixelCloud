@@ -1,6 +1,7 @@
 package de.haizon.pixelcloud.master.functions;
 
 import de.haizon.pixelcloud.api.group.ICloudGroup;
+import de.haizon.pixelcloud.api.services.impl.CloudGroupImpl;
 import de.haizon.pixelcloud.api.services.version.GroupType;
 import de.haizon.pixelcloud.api.services.version.IGroupVersion;
 import de.haizon.pixelcloud.api.template.ITemplate;
@@ -20,7 +21,7 @@ import java.util.UUID;
  */
 public class CloudGroupFunctions {
 
-    private final List<ICloudGroup> cloudGroups;
+    private final List<CloudGroupImpl> cloudGroups;
 
     public CloudGroupFunctions() {
         this.cloudGroups = new ArrayList<>();
@@ -46,58 +47,7 @@ public class CloudGroupFunctions {
                     int percentage = resultSet.getInt("percentageToStartNewService");
                     boolean maintenance = Boolean.parseBoolean(resultSet.getString("maintenance"));
 
-                    cloudGroups.add(new ICloudGroup() {
-
-                        @Override
-                        public String getName() {
-                            return name;
-                        }
-
-                        @Override
-                        public int getMaxServices() {
-                            return maxServices;
-                        }
-
-                        @Override
-                        public int getMinServices() {
-                            return minServices;
-                        }
-
-                        @Override
-                        public int getMaxHeap() {
-                            return maxHeap;
-                        }
-
-                        @Override
-                        public int getPercentageToStartNewService() {
-                            return percentage;
-                        }
-
-                        @Override
-                        public IGroupVersion getGroupVersion() {
-                            return CloudMaster.getInstance().getVersionFetcher().getFetchedVersions().stream().filter(iGroupVersion -> iGroupVersion.getName().equalsIgnoreCase(version)).findFirst().orElse(null);
-                        }
-
-                        @Override
-                        public GroupType getGroupType() {
-                            return Arrays.stream(GroupType.values()).filter(groupType -> groupType.name().equalsIgnoreCase(type)).findFirst().orElse(null);
-                        }
-
-                        @Override
-                        public boolean isMaintenance() {
-                            return maintenance;
-                        }
-
-                        @Override
-                        public int getMaxPlayers() {
-                            return maxPlayers;
-                        }
-
-                        @Override
-                        public ITemplate getTemplate() {
-                            return CloudMaster.getInstance().getTemplateManager().getTemplates().stream().filter(iTemplate -> iTemplate.getName().equalsIgnoreCase(template)).findFirst().orElse(null);
-                        }
-                    });
+                    cloudGroups.add(new CloudGroupImpl(name,  CloudMaster.getInstance().getVersionFetcher().getFetchedVersions().stream().filter(iGroupVersion -> iGroupVersion.getName().equalsIgnoreCase(version)).findFirst().orElse(null), maxServices, minServices, maxHeap, percentage, maxPlayers, maintenance, CloudMaster.getInstance().getTemplateManager().getTemplates().stream().filter(iTemplate -> iTemplate.getName().equalsIgnoreCase(template)).findFirst().orElse(null), type));
 
                 }
 
@@ -109,7 +59,7 @@ public class CloudGroupFunctions {
         });
     }
 
-    public List<ICloudGroup> getCloudGroups() {
+    public List<CloudGroupImpl> getCloudGroups() {
         return cloudGroups;
     }
 }

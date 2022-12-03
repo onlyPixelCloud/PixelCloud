@@ -1,5 +1,6 @@
 package de.haizon.pixelcloud.master.backend.versions;
 
+import de.haizon.pixelcloud.api.services.impl.GroupVersionImpl;
 import de.haizon.pixelcloud.api.services.version.GroupType;
 import de.haizon.pixelcloud.api.services.version.IGroupVersion;
 import de.haizon.pixelcloud.master.backend.loader.WebsiteContentLoader;
@@ -19,7 +20,7 @@ import java.util.List;
  */
 public class VersionFetcher {
 
-    private final List<IGroupVersion> groupVersions;
+    private final List<GroupVersionImpl> groupVersions;
 
     public VersionFetcher() {
         this.groupVersions = new ArrayList<>();
@@ -36,22 +37,7 @@ public class VersionFetcher {
 
                 String[] values = o.toString().split(";");
 
-                groupVersions.add(new IGroupVersion() {
-                    @Override
-                    public GroupType getType() {
-                        return Arrays.stream(GroupType.values()).filter(groupType -> groupType.name().equalsIgnoreCase(values[0])).findFirst().orElse(null);
-                    }
-
-                    @Override
-                    public String getName() {
-                        return values[1];
-                    }
-
-                    @Override
-                    public String getUrl() {
-                        return values[2];
-                    }
-                });
+                groupVersions.add(new GroupVersionImpl(Arrays.stream(GroupType.values()).filter(groupType -> groupType.name().equalsIgnoreCase(values[0])).findFirst().orElse(null), values[1], values[2]));
 
             });
 
@@ -61,7 +47,7 @@ public class VersionFetcher {
 
     }
 
-    public List<IGroupVersion> getFetchedVersions() {
+    public List<GroupVersionImpl> getFetchedVersions() {
         return groupVersions;
     }
 }

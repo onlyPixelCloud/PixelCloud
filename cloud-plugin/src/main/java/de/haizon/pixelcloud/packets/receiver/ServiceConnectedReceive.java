@@ -1,9 +1,14 @@
 package de.haizon.pixelcloud.packets.receiver;
 
+import de.haizon.pixelcloud.CloudPlugin;
 import de.haizon.pixelcloud.api.packets.Packet;
 import de.haizon.pixelcloud.api.packets.PacketType;
 import de.haizon.pixelcloud.api.packets.abstracts.PacketReceiveFunction;
+import de.haizon.pixelcloud.api.services.ICloudService;
+import de.haizon.pixelcloud.bootstrap.velocity.VelocityBootstrap;
 import org.json.JSONObject;
+
+import java.net.InetSocketAddress;
 
 /**
  * JavaDoc this file!
@@ -13,22 +18,20 @@ import org.json.JSONObject;
  */
 public class ServiceConnectedReceive extends PacketReceiveFunction {
     public ServiceConnectedReceive() {
-        super(PacketType.SERVICE_ONLINE.name());
+        super(PacketType.SERVICE_REGISTER.name());
     }
 
     @Override
     public void received(Packet packet) {
 
-        JSONObject jsonObject = new JSONObject(packet.content);
+        JSONObject jsonObject = (JSONObject) packet.content;
 
-        if(jsonObject.getString("type").equalsIgnoreCase("SERVER")){
+        ICloudService cloudService = CloudPlugin.getInstance().getCloudServiceImplementation().getCloudServices().stream().filter(service -> service.getName().equalsIgnoreCase(jsonObject.getString("name"))).findAny().orElse(null);
 
-            String name = jsonObject.getString("name");
-            int port = jsonObject.getInt("port");
+        if(cloudService == null) return;
 
-
-
-        }
+        VelocityBootstrap.getInstance().registerService(cloudService.getName(), new InetSocketAddress("127.0.0.1", cloudService.getPort()));
+        System.out.println("registered {" + cloudService.getName() + ":" + cloudService.getPort() + "}");
 
     }
 }

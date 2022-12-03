@@ -17,6 +17,9 @@ public class DefaultVelocityConfiguration implements IServiceConfiguration {
     @Override
     public void configure(ICloudService cloudService, File file) {
         File configFile = new File(file, "velocity.toml");
+
+        if(configFile.exists()) configFile.delete();
+
         if(!configFile.exists()){
             CloudMaster.getInstance().getFileManager().copyFileOutOfJar(configFile, "/files/velocity.toml");
         }

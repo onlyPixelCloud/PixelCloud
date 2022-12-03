@@ -1,9 +1,12 @@
 package de.haizon.pixelcloud.api.group;
 
+import de.haizon.pixelcloud.api.services.ICloudService;
+import de.haizon.pixelcloud.api.services.impl.CloudServiceImpl;
 import de.haizon.pixelcloud.api.services.version.GroupType;
 import de.haizon.pixelcloud.api.services.version.IGroupVersion;
 import de.haizon.pixelcloud.api.template.ITemplate;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -63,5 +66,7 @@ public interface ICloudGroup {
      * Returns the group template
      */
     ITemplate getTemplate();
+
+    List<ICloudService> getOnlineServices();
 
 }

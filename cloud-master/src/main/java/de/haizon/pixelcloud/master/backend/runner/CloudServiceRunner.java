@@ -4,6 +4,8 @@ import de.haizon.pixelcloud.api.console.Color;
 import de.haizon.pixelcloud.api.group.ICloudGroup;
 import de.haizon.pixelcloud.api.packets.PacketType;
 import de.haizon.pixelcloud.api.services.ICloudService;
+import de.haizon.pixelcloud.api.services.impl.CloudGroupImpl;
+import de.haizon.pixelcloud.api.services.impl.CloudServiceImpl;
 import de.haizon.pixelcloud.api.services.status.CloudServiceStatus;
 import de.haizon.pixelcloud.api.template.TemplateType;
 import de.haizon.pixelcloud.master.CloudMaster;
@@ -18,6 +20,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 /**
  * JavaDoc this file!
@@ -35,13 +38,8 @@ public class CloudServiceRunner {
 
     public void startAll(){
 
-        CloudMaster.getInstance().getCloudServiceFunctions().getCloudServices().forEach(cloudService -> {
-            try {
-                start(cloudService);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        CloudMaster.getInstance().getCloudServiceFunctions().getCloudServices().forEach(cloudService -> CloudMaster.getInstance().getCloudServiceStartQueue().addToQueue(cloudService));
+        CloudMaster.getInstance().getCloudServiceStartQueue().startThread();
 
     }
 
@@ -51,7 +49,8 @@ public class CloudServiceRunner {
 
         configureService(cloudService);
 
-        cloudService.setStatus(CloudServiceStatus.STARTING);
+        cloudService.setStatus(CloudServiceStatus.PREPARING);
+        CloudMaster.getInstance().getPacketFunction().sendPacket(cloudService.update());
 
         switch (cloudService.getCloudGroup().getTemplate().getTemplateType()){
             case STATIC -> {
@@ -101,6 +100,9 @@ public class CloudServiceRunner {
             return;
         }
 
+        cloudService.setStatus(CloudServiceStatus.STARTING);
+        CloudMaster.getInstance().getPacketFunction().sendPacket(cloudService.update());
+
         Process finalProcess = process;
 
         new Thread(() -> {
@@ -125,6 +127,9 @@ public class CloudServiceRunner {
             try {
                 bufferedReader.close();
                 CloudMaster.getInstance().getCloudLogger().info("Service " + cloudService.getName() + " was stopped.");
+                cloudService.setStatus(CloudServiceStatus.STOPPED);
+                CloudMaster.getInstance().getCloudLogger().info(cloudService.getServiceStatus().name());
+                CloudMaster.getInstance().getPacketFunction().sendPacket(cloudService.update());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -135,10 +140,20 @@ public class CloudServiceRunner {
 
     }
 
-    public void start(ICloudGroup cloudGroup){
+    public void start(CloudGroupImpl cloudGroup){
 
+        for(int i = cloudGroup.getMinServices(); i < (cloudGroup.getMaxServices() + 1); i++){
+            CloudServiceImpl cloudService = new CloudServiceImpl(cloudGroup.getName(), cloudGroup.getName()  + "-" + i, cloudGroup, i, randomPort(), cloudGroup.getTemplate().getTemplateType().equals(TemplateType.STATIC), CloudServiceStatus.STOPPED);
 
+            CloudMaster.getInstance().getCloudServiceFunctions().getCloudServices().add(cloudService);
 
+            try {
+                start(cloudService);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
     }
 
     public void shutdown(ICloudService cloudService){
@@ -198,6 +213,10 @@ public class CloudServiceRunner {
         arguments.add(cloudService.getVersion().getName() + ".jar");
 
         return arguments;
+    }
+
+    private int randomPort(){
+        return new Random().nextInt(40000 - 10000 + 1) + 10000;
     }
 
     private ProcessBuilder createProcessBuilder(ICloudService cloudService){

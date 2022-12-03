@@ -1,23 +1,14 @@
 package de.haizon.pixelcloud.implementation;
 
-import com.sun.jdi.IntegerType;
 import de.haizon.pixelcloud.CloudPlugin;
 import de.haizon.pixelcloud.api.group.ICloudGroup;
 import de.haizon.pixelcloud.api.packets.Packet;
 import de.haizon.pixelcloud.api.packets.abstracts.PacketReceiveFunction;
-import de.haizon.pixelcloud.api.player.ICloudPlayer;
 import de.haizon.pixelcloud.api.services.ICloudService;
-import de.haizon.pixelcloud.api.services.status.CloudServiceStatus;
-import de.haizon.pixelcloud.api.services.version.IGroupVersion;
-import de.haizon.pixelcloud.api.template.TemplateType;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import de.haizon.pixelcloud.api.services.impl.CloudServiceImpl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * JavaDoc this file!
@@ -27,11 +18,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class CloudServiceImplementation extends PacketReceiveFunction {
 
-    private final List<ICloudService> cloudServices;
+    private static final List<ICloudService> cloudServices = new ArrayList<>();
 
     public CloudServiceImplementation() {
         super("receive_service");
-        this.cloudServices = new ArrayList<>();
     }
 
     public List<ICloudService> getCloudServices() {
@@ -41,11 +31,27 @@ public class CloudServiceImplementation extends PacketReceiveFunction {
     @Override
     public void received(Packet packet) {
 
-        if(packet.cloudService == null) return;
+        if(packet.content instanceof CloudServiceImpl){
+            ICloudService cloudService = (ICloudService) packet.content;
 
-        ICloudService cloudService = packet.cloudService;
+            if(cloudServices.stream().anyMatch(cloudService1 -> cloudService1.getName().equalsIgnoreCase(cloudService.getName()))) {
+                cloudServices.remove(cloudServices.stream().filter(cloudService1 -> cloudService1.getName().equalsIgnoreCase(cloudService.getName())).findAny().orElse(null));
+                cloudService.getCloudGroup().getOnlineServices().remove(cloudServices.stream().filter(cloudService1 -> cloudService1.getName().equalsIgnoreCase(cloudService.getName())).findAny().orElse(null));
+            }
 
-        if (!cloudServices.contains(cloudService)) cloudServices.add(cloudService);
+            cloudServices.add(cloudService);
+
+            ICloudGroup cloudGroup = CloudPlugin.getInstance().getCloudGroupImplementation().getCloudGroups().stream().filter(iCloudGroup -> iCloudGroup.getName().equalsIgnoreCase(cloudService.getCloudGroup().getName())).findFirst().orElse(null);
+
+            if(cloudGroup == null) return;
+
+            if(cloudGroup.getOnlineServices().stream().anyMatch(iCloudService -> iCloudService.getName().equalsIgnoreCase(cloudService.getName()))){
+                cloudGroup.getOnlineServices().remove(cloudGroup.getOnlineServices().stream().filter(iCloudService -> iCloudService.getName().equalsIgnoreCase(cloudService.getName())).findAny().orElse(null));
+            }
+
+            cloudGroup.getOnlineServices().add(cloudService);
+
+        }
 
     }
 }

@@ -2,18 +2,17 @@ package de.haizon.pixelcloud.bootstrap.velocity;
 
 import com.google.inject.Inject;
 import com.velocitypowered.api.command.CommandManager;
+import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
 import de.haizon.pixelcloud.CloudPlugin;
-import de.haizon.pixelcloud.api.packets.Packet;
-import de.haizon.pixelcloud.api.packets.PacketType;
+import de.haizon.pixelcloud.bootstrap.velocity.commands.CloudCommand;
 import de.haizon.pixelcloud.bootstrap.velocity.events.ConnectEvents;
-import de.haizon.pixelcloud.implementation.CloudServiceImplementation;
+import de.haizon.pixelcloud.bootstrap.velocity.packets.PacketINCloudPlayerConnect;
 import de.haizon.pixelcloud.packets.receiver.ServiceConnectedReceive;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 
 import java.net.InetSocketAddress;
@@ -31,14 +30,18 @@ public class VelocityBootstrap {
     private final ProxyServer proxyServer;
     private final Logger logger;
 
+    private static VelocityBootstrap instance;
+
     @Inject
     public VelocityBootstrap(ProxyServer proxyServer, Logger logger) {
+        instance = this;
         this.proxyServer = proxyServer;
         this.logger = logger;
 
         new CloudPlugin();
 
         CloudPlugin.getInstance().getPacketFunction().registerPacketReceiver(new ServiceConnectedReceive());
+        CloudPlugin.getInstance().getPacketFunction().registerPacketReceiver(new PacketINCloudPlayerConnect());
 
         registerFallback();
     }
@@ -48,7 +51,7 @@ public class VelocityBootstrap {
         proxyServer.getEventManager().register(this, new ConnectEvents());
 
         CommandManager commandManager = proxyServer.getCommandManager();
-        //register cloud command
+        commandManager.register(commandManager.metaBuilder("cloud").aliases("cl").plugin(this).build(), new CloudCommand());
     }
 
     public void registerFallback(){
@@ -63,6 +66,10 @@ public class VelocityBootstrap {
     public void registerService(String name, InetSocketAddress inetSocketAddress){
         ServerInfo serverInfo = new ServerInfo(name, inetSocketAddress);
         proxyServer.registerServer(serverInfo);
+    }
+
+    public static VelocityBootstrap getInstance() {
+        return instance;
     }
 
     public ProxyServer getProxyServer() {

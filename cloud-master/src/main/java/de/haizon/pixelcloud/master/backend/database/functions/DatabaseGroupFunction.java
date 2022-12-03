@@ -1,5 +1,7 @@
 package de.haizon.pixelcloud.master.backend.database.functions;
 
+import de.haizon.pixelcloud.api.services.impl.CloudGroupImpl;
+import de.haizon.pixelcloud.api.services.impl.GroupVersionImpl;
 import de.haizon.pixelcloud.api.services.version.GroupType;
 import de.haizon.pixelcloud.api.services.version.IGroupVersion;
 import de.haizon.pixelcloud.master.CloudMaster;
@@ -9,6 +11,7 @@ import de.haizon.pixelcloud.master.backend.downloader.UrlDownloader;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.UUID;
 
 /**
@@ -48,11 +51,16 @@ public class DatabaseGroupFunction {
 
             databaseAdapter.executeUpdate("INSERT INTO module_groups (uniqueId, name, template, maxServices, minServices, maxHeap, maxPlayers, percentageToStartNewService, type, version, maintenance) VALUES ('" + uuid + "', '" + name + "', '" + template + "', '" + maxServices + "', '" + minServices + "', '" + maxHeap + "', '" + maxPlayers + "', '" + percentage + "', '" + groupType.name() + "', '" + version + "', 'true');");
 
-            IGroupVersion groupVersion = CloudMaster.getInstance().getVersionFetcher().getFetchedVersions().stream().filter(iGroupVersion -> iGroupVersion.getName().equalsIgnoreCase(version)).findFirst().orElse(null);
+            GroupVersionImpl groupVersion = CloudMaster.getInstance().getVersionFetcher().getFetchedVersions().stream().filter(iGroupVersion -> iGroupVersion.getName().equalsIgnoreCase(version)).findFirst().orElse(null);
 
             if(groupVersion == null) return;
 
             new UrlDownloader(groupVersion.getUrl(), new File("storage/jars", groupVersion.getName() + ".jar")).download();
+
+            CloudGroupImpl cloudGroup = new CloudGroupImpl(name, groupVersion, maxServices, minServices, maxHeap, percentage, maxPlayers, true, CloudMaster.getInstance().getTemplateManager().getTemplates().stream().filter(template1 -> template1.getName().equalsIgnoreCase(template)).findFirst().orElse(null), groupType.name());
+
+            CloudMaster.getInstance().getCloudGroupFunctions().getCloudGroups().add(cloudGroup);
+            CloudMaster.getInstance().getCloudServiceRunner().start(cloudGroup);
 
         }
     }

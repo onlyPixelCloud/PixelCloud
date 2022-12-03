@@ -1,5 +1,6 @@
 package de.haizon.pixelcloud.master.template;
 
+import de.haizon.pixelcloud.api.services.impl.TemplateImpl;
 import de.haizon.pixelcloud.api.template.ITemplate;
 import de.haizon.pixelcloud.api.template.TemplateType;
 import de.haizon.pixelcloud.master.CloudMaster;
@@ -18,7 +19,7 @@ import java.util.UUID;
  */
 public class TemplateManager {
 
-    private final List<ITemplate> templates;
+    private final List<TemplateImpl> templates;
 
     public TemplateManager() {
         this.templates = new ArrayList<>();
@@ -45,22 +46,7 @@ public class TemplateManager {
 
                     if(templateType == null) return false;
 
-                    templates.add(new ITemplate() {
-                        @Override
-                        public UUID getUniqueId() {
-                            return uuid;
-                        }
-
-                        @Override
-                        public String getName() {
-                            return name;
-                        }
-
-                        @Override
-                        public TemplateType getTemplateType() {
-                            return templateType;
-                        }
-                    });
+                    templates.add(new TemplateImpl(uuid.toString(), name, templateType));
                 }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
@@ -76,7 +62,7 @@ public class TemplateManager {
 
     }
 
-    public List<ITemplate> getTemplates() {
+    public List<TemplateImpl> getTemplates() {
         return templates;
     }
 }

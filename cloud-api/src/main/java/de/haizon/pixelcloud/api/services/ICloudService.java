@@ -1,12 +1,14 @@
 package de.haizon.pixelcloud.api.services;
 
 import de.haizon.pixelcloud.api.group.ICloudGroup;
+import de.haizon.pixelcloud.api.packets.CloudPacket;
 import de.haizon.pixelcloud.api.player.ICloudPlayer;
+import de.haizon.pixelcloud.api.services.impl.CloudServiceImpl;
 import de.haizon.pixelcloud.api.services.status.CloudServiceStatus;
 import de.haizon.pixelcloud.api.services.version.IGroupVersion;
+import org.json.JSONObject;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -80,6 +82,6 @@ public interface ICloudService {
     /**
      * Updates the service to the network
      */
-    void update();
+    CloudPacket<CloudServiceImpl> update();
 
 }

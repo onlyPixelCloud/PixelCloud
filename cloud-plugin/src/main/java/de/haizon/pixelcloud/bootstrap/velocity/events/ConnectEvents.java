@@ -79,7 +79,7 @@ public class ConnectEvents {
 
     @Subscribe
     public void handle(DisconnectEvent event){
-        CloudPacket<JSONObject> cloudPacket = new CloudPacket<>(PacketType.PLAYER_DISCONNECTED.name(), new JSONObject().put("uniqueId", event.getPlayer().getUniqueId()).put("name", event.getPlayer().getUsername()));
+        CloudPacket<JSONObject> cloudPacket = new CloudPacket<>(PacketType.PLAYER_DISCONNECTED.name(), new JSONObject().put("uniqueId", event.getPlayer().getUniqueId().toString()).put("name", event.getPlayer().getUsername()));
         CloudPlugin.getInstance().getPacketFunction().sendPacket(cloudPacket);
     }
 

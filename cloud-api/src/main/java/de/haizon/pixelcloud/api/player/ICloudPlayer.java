@@ -26,6 +26,8 @@ public interface ICloudPlayer {
      */
     void sendActionbar(String var1);
 
+    void sendMessage(String var1);
+
     void kick();
 
     void kick(String var1);

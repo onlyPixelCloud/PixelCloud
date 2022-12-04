@@ -1,7 +1,7 @@
 package de.haizon.pixelcloud.master.backend.packets.functions;
 
 import de.haizon.pixelcloud.api.console.Color;
-import de.haizon.pixelcloud.api.group.ICloudGroup;
+import de.haizon.pixelcloud.api.event.nodes.CloudServiceLoggedInEvent;
 import de.haizon.pixelcloud.api.packets.CloudPacket;
 import de.haizon.pixelcloud.api.packets.Packet;
 import de.haizon.pixelcloud.api.packets.PacketType;
@@ -38,6 +38,8 @@ public class PacketReceiveServiceOnlineFunction extends PacketReceiveFunction {
 
         cloudService.setStatus(CloudServiceStatus.STARTED);
         CloudMaster.getInstance().getCloudLogger().success("Service " + Color.RED.getColor() + cloudService.getName() + Color.RESET.getColor() + " was successfully connected to the wrapper!");
+
+        CloudMaster.getInstance().callEvent(new CloudServiceLoggedInEvent(cloudService));
 
         CloudPacket<JSONObject> jsonObjectCloudPacket = new CloudPacket<>(PacketType.SERVICE_REGISTER.name(), new JSONObject().put("name", cloudService.getName()));
         CloudMaster.getInstance().getPacketFunction().sendPacket(jsonObjectCloudPacket);

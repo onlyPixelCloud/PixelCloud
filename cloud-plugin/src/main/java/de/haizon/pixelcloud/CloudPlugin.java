@@ -3,6 +3,7 @@ package de.haizon.pixelcloud;
 import de.haizon.pixelcloud.api.packets.CloudPacket;
 import de.haizon.pixelcloud.api.packets.PacketType;
 import de.haizon.pixelcloud.api.services.ICloudService;
+import de.haizon.pixelcloud.packets.receiver.PacketInSendCloudMessage;
 import de.haizon.pixelcloud.config.PluginServiceIdentifier;
 import de.haizon.pixelcloud.implementation.CloudGroupImplementation;
 import de.haizon.pixelcloud.implementation.CloudServiceImplementation;
@@ -37,6 +38,7 @@ public class CloudPlugin {
 
         packetFunction.registerPacketReceiver(cloudGroupImplementation);
         packetFunction.registerPacketReceiver(cloudServiceImplementation);
+        packetFunction.registerPacketReceiver(new PacketInSendCloudMessage());
 
         CloudPacket<JSONObject> cloudPacket = new CloudPacket<>(PacketType.SERVICE_ONLINE.name(), new JSONObject().put("name", pluginServiceIdentifier.getJsonObject().getString("name")).put("type", pluginServiceIdentifier.getJsonObject().getString("type")).put("port", pluginServiceIdentifier.getJsonObject().getInt("port")));
 

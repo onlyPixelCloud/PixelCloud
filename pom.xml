@@ -13,6 +13,7 @@
         <module>cloud-master</module>
         <module>cloud-plugin</module>
         <module>cloud-modules</module>
+        <module>cloud-modules/module-notify</module>
     </modules>
 
     <properties>

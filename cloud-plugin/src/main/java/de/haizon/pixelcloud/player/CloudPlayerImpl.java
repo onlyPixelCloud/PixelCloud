@@ -38,6 +38,11 @@ public class CloudPlayerImpl implements ICloudPlayer {
     }
 
     @Override
+    public void sendMessage(String var1) {
+
+    }
+
+    @Override
     public void kick() {
 
     }

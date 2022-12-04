@@ -1,10 +1,12 @@
 package de.haizon.pixelcloud.master;
 
+import de.haizon.pixelcloud.api.event.IEvent;
 import de.haizon.pixelcloud.master.backend.database.DatabaseAdapter;
 import de.haizon.pixelcloud.master.backend.database.functions.DatabaseGroupFunction;
 import de.haizon.pixelcloud.master.backend.database.functions.DatabaseTemplateFunction;
 import de.haizon.pixelcloud.master.backend.dependency.DependencyLoader;
 import de.haizon.pixelcloud.master.backend.files.FileManager;
+import de.haizon.pixelcloud.master.backend.handler.EventBus;
 import de.haizon.pixelcloud.master.backend.modules.ModuleHandler;
 import de.haizon.pixelcloud.master.backend.packets.PacketFunction;
 import de.haizon.pixelcloud.master.backend.packets.functions.inout.PacketInAndOutSendBackToClient;
@@ -57,6 +59,7 @@ public class CloudMaster {
 
     private final PacketFunction packetFunction;
     private final ModuleHandler moduleHandler;
+    private final EventBus eventBus;
 
     public static void main(String[] args) {
         new CloudMaster();
@@ -110,6 +113,8 @@ public class CloudMaster {
 
         fileManager.deleteFiles(new File("storage/servers/temp"));
 
+        eventBus = new EventBus();
+
         wrapperManager = new WrapperManager();
 
         packetFunction = new PacketFunction();
@@ -145,6 +150,17 @@ public class CloudMaster {
 
     public void setDatabaseTemplateFunction(DatabaseTemplateFunction databaseTemplateFunction) {
         this.databaseTemplateFunction = databaseTemplateFunction;
+    }
+
+    public <T extends IEvent> void callEvent(T event) {
+
+        eventBus.post(event);
+        event.postCall();
+
+    }
+
+    public EventBus getEventBus() {
+        return eventBus;
     }
 
     public ModuleHandler getModuleHandler() {

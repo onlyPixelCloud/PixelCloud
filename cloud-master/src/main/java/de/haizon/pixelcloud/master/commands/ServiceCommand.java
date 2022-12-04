@@ -39,11 +39,6 @@ public class ServiceCommand implements ICommandHandler {
             switch (args[2]){
                 case "stop", "restart" -> {
                     CloudMaster.getInstance().getCloudServiceRunner().shutdown(cloudService);
-                    try {
-                        CloudMaster.getInstance().getCloudServiceRunner().start(cloudService);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
                 }
                 case "execute" -> {
 

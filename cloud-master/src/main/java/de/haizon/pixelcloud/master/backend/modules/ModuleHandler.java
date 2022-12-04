@@ -46,7 +46,7 @@ public class ModuleHandler {
             try {
 
                 jarFile = new JarFile(file);
-                JarEntry jarEntry = jarFile.getJarEntry("module.json");
+                JarEntry jarEntry = jarFile.getJarEntry("cloud_module.json");
 
                 JSONObject jsonObject;
 

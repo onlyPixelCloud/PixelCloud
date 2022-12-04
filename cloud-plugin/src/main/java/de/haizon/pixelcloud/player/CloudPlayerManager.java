@@ -24,7 +24,7 @@ public class CloudPlayerManager {
         return cloudPlayers.stream().filter(iCloudPlayer -> iCloudPlayer.getUniqueId().equals(uuid)).findFirst().orElse(null);
     }
 
-    public static List<ICloudPlayer> getCloudPlayers() {
+    public List<ICloudPlayer> getCloudPlayers() {
         return cloudPlayers;
     }
 

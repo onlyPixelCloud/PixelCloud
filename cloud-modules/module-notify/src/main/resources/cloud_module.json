@@ -1,0 +1,4 @@
+{
+  "name": "notify_module",
+  "main": "de.haizon.notify.NotifyModule"
+}

@@ -11,11 +11,17 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class SpigotBootstrap extends JavaPlugin {
 
+    private static SpigotBootstrap instance;
+
     @Override
     public void onEnable() {
+        instance = this;
 
         new CloudPlugin();
 
     }
 
+    public static SpigotBootstrap getInstance() {
+        return instance;
+    }
 }

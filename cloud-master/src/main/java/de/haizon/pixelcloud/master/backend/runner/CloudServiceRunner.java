@@ -1,8 +1,8 @@
 package de.haizon.pixelcloud.master.backend.runner;
 
 import de.haizon.pixelcloud.api.console.Color;
+import de.haizon.pixelcloud.api.event.nodes.CloudServiceLoggedOutEvent;
 import de.haizon.pixelcloud.api.group.ICloudGroup;
-import de.haizon.pixelcloud.api.packets.PacketType;
 import de.haizon.pixelcloud.api.services.ICloudService;
 import de.haizon.pixelcloud.api.services.impl.CloudGroupImpl;
 import de.haizon.pixelcloud.api.services.impl.CloudServiceImpl;
@@ -51,6 +51,10 @@ public class CloudServiceRunner {
 
         cloudService.setStatus(CloudServiceStatus.PREPARING);
         CloudMaster.getInstance().getPacketFunction().sendPacket(cloudService.update());
+
+        if (cloudService.getCloudGroup().getOnlineServices().size() > cloudService.getCloudGroup().getMaxServices()) {
+            return;
+        }
 
         switch (cloudService.getCloudGroup().getTemplate().getTemplateType()){
             case STATIC -> {
@@ -126,13 +130,12 @@ public class CloudServiceRunner {
 
             try {
                 bufferedReader.close();
-                CloudMaster.getInstance().getCloudLogger().info("Service " + cloudService.getName() + " was stopped.");
+                CloudMaster.getInstance().getCloudLogger().info("Service §c" + cloudService.getName() + " §rwas stopped.");
                 cloudService.setStatus(CloudServiceStatus.STOPPED);
-                CloudMaster.getInstance().getCloudLogger().info(cloudService.getServiceStatus().name());
+                CloudMaster.getInstance().getEventBus().post(new CloudServiceLoggedOutEvent(cloudService));
                 CloudMaster.getInstance().getPacketFunction().sendPacket(cloudService.update());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+                start(cloudService);
+            } catch (IOException ignored) {}
 
         }).start();
 

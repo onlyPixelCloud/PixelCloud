@@ -9,6 +9,7 @@ import de.haizon.pixelcloud.master.backend.files.FileManager;
 import de.haizon.pixelcloud.master.backend.handler.EventBus;
 import de.haizon.pixelcloud.master.backend.modules.ModuleHandler;
 import de.haizon.pixelcloud.master.backend.packets.PacketFunction;
+import de.haizon.pixelcloud.master.backend.packets.functions.inbound.PacketInServiceStop;
 import de.haizon.pixelcloud.master.backend.packets.functions.inout.PacketInAndOutSendBackToClient;
 import de.haizon.pixelcloud.master.backend.packets.functions.inbound.PacketInPlayerConnected;
 import de.haizon.pixelcloud.master.backend.packets.functions.PacketReceiveServiceOnlineFunction;
@@ -139,6 +140,7 @@ public class CloudMaster {
         packetFunction.registerPacketReceiver(new PacketReceiveServiceOnlineFunction());
         packetFunction.registerPacketReceiver(new PacketInPlayerConnected());
         packetFunction.registerPacketReceiver(new PacketInAndOutSendBackToClient());
+        packetFunction.registerPacketReceiver(new PacketInServiceStop());
 
 //        new RestServer();
 

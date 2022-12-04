@@ -17,10 +17,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * JavaDoc this file!
@@ -174,6 +171,14 @@ public class CloudServiceRunner {
 
     public void copyPlugin(ICloudService cloudService){
         CloudMaster.getInstance().getFileManager().copyFile("storage/jars/cloud-plugin-1.0-SNAPSHOT-shaded.jar", "storage/servers/" + (cloudService.getCloudGroup().getTemplate().getTemplateType().equals(TemplateType.STATIC) ? "static/" + cloudService.getName() + "/plugins/cloud-plugin-1.0-SNAPSHOT-shaded.jar" : "temp/" + cloudService.getName()  + "/plugins/cloud-plugin-1.0-SNAPSHOT-shaded.jar"));
+
+        CloudMaster.getInstance().getModuleHandler().getModules().forEach(pixelModule -> {
+            if(pixelModule.getGroupTypes() == null) return;
+            if (Arrays.stream(pixelModule.getGroupTypes()).toList().contains(cloudService.getCloudGroup().getGroupType())) {
+                CloudMaster.getInstance().getFileManager().copyFile("modules/" + pixelModule.getFileName(), "storage/servers/" + (cloudService.getCloudGroup().getTemplate().getTemplateType().equals(TemplateType.STATIC) ? "static/" + cloudService.getName() + "/plugins/cloud-plugin-1.0-SNAPSHOT-shaded.jar" : "temp/" + cloudService.getName()  + "plugins/" + pixelModule.getFileName()));
+            }
+        });
+
     }
 
     public void executeCommand(ICloudService cloudService, String command) {

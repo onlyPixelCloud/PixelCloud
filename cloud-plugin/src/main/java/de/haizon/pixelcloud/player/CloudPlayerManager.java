@@ -17,11 +17,11 @@ public class CloudPlayerManager {
     private static final List<ICloudPlayer> cloudPlayers = new ArrayList<>();
 
     public void register(UUID uuid){
-        cloudPlayers.add(new CloudPlayerImpl(uuid));
+        cloudPlayers.add(new CloudPlayerImpl(uuid.toString(), null, null));
     }
 
     public ICloudPlayer getCloudPlayer(UUID uuid){
-        return cloudPlayers.stream().filter(iCloudPlayer -> iCloudPlayer.getUniqueId().equals(uuid)).findFirst().orElse(null);
+        return cloudPlayers.stream().filter(iCloudPlayer -> iCloudPlayer.getUniqueId().equals(uuid.toString())).findFirst().orElse(null);
     }
 
     public List<ICloudPlayer> getCloudPlayers() {

@@ -11,6 +11,9 @@ import de.haizon.pixelcloud.CloudPlugin;
 import de.haizon.pixelcloud.bootstrap.velocity.commands.CloudCommand;
 import de.haizon.pixelcloud.bootstrap.velocity.events.ConnectEvents;
 import de.haizon.pixelcloud.bootstrap.velocity.packets.inbound.PacketInCloudPlayerConnect;
+import de.haizon.pixelcloud.bootstrap.velocity.packets.inbound.PacketInCloudPlayerKick;
+import de.haizon.pixelcloud.bootstrap.velocity.packets.inbound.PacketInCloudPlayerSendActionBar;
+import de.haizon.pixelcloud.bootstrap.velocity.packets.inbound.PacketInCloudPlayerSendMessage;
 import de.haizon.pixelcloud.packets.receiver.ServiceConnectedReceive;
 import org.slf4j.Logger;
 
@@ -40,7 +43,11 @@ public class VelocityBootstrap {
         new CloudPlugin();
 
         CloudPlugin.getInstance().getPacketFunction().registerPacketReceiver(new ServiceConnectedReceive());
+
         CloudPlugin.getInstance().getPacketFunction().registerPacketReceiver(new PacketInCloudPlayerConnect());
+        CloudPlugin.getInstance().getPacketFunction().registerPacketReceiver(new PacketInCloudPlayerKick());
+        CloudPlugin.getInstance().getPacketFunction().registerPacketReceiver(new PacketInCloudPlayerSendActionBar());
+        CloudPlugin.getInstance().getPacketFunction().registerPacketReceiver(new PacketInCloudPlayerSendMessage());
 
         registerFallback();
     }

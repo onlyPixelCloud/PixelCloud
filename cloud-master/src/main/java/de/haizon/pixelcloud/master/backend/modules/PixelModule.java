@@ -14,12 +14,18 @@ public class PixelModule {
     public String version;
     public String[] authors;
     public GroupType[] groupTypes;
+    public String fileName;
 
-    public PixelModule(String name, String version, String[] authors, GroupType[] groupTypes) {
+    public PixelModule(String name, String version, String[] authors, GroupType[] groupTypes, String fileName) {
         this.name = name;
         this.version = version;
         this.authors = authors;
         this.groupTypes = groupTypes;
+        this.fileName = fileName;
+    }
+
+    public String getFileName() {
+        return fileName;
     }
 
     public String getName() {

@@ -5,7 +5,6 @@ import de.haizon.notify.listener.CloudNotifyListener;
 import de.haizon.pixelcloud.api.logger.ICloudLogger;
 import de.haizon.pixelcloud.api.modules.ICloudModule;
 import de.haizon.pixelcloud.api.modules.Module;
-import de.haizon.pixelcloud.api.services.version.GroupType;
 import de.haizon.pixelcloud.master.CloudMaster;
 
 import java.io.IOException;
@@ -16,7 +15,7 @@ import java.io.IOException;
  *
  * @author Haizoooon (maxhewa@gmail.com)
  */
-@Module(name = "notify_module", authors = {"Haizoooon"}, groupType = {GroupType.PROXY})
+@Module(name = "notify_module", authors = {"Haizoooon"})
 public class NotifyModule implements ICloudModule {
 
     private static NotifyModule instance;

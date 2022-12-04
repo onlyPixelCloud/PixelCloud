@@ -4,7 +4,9 @@ import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
 import de.haizon.pixelcloud.api.commands.Command;
 import de.haizon.pixelcloud.bootstrap.velocity.commands.interfaces.SubCommand;
+import de.haizon.pixelcloud.bootstrap.velocity.commands.sub.EditCommand;
 import de.haizon.pixelcloud.bootstrap.velocity.commands.sub.ListCommand;
+import de.haizon.pixelcloud.bootstrap.velocity.commands.sub.ServiceCommand;
 import net.kyori.adventure.text.Component;
 
 import java.lang.reflect.InvocationTargetException;
@@ -30,25 +32,24 @@ public class CloudCommand implements SimpleCommand {
 
             String[] args = invocation.arguments();
 
-            register(ListCommand.class);
+            register(ListCommand.class, EditCommand.class, ServiceCommand.class);
 
             if(args.length == 0){
+                player.sendMessage(Component.text());
                 subCommands.forEach((command, subCommand) -> player.sendMessage(Component.text("§7/cloud §c" + command.name() + " §8- §7" + command.description())));
+                player.sendMessage(Component.text());
                 return;
             }
 
-            if(args.length == 1){
-                String subCommandArg = args[0];
+            String subCommandArg = args[0];
 
-                if(getCommandHandlerByName(subCommandArg) == null){
-                    player.sendMessage(Component.text("§7This command cannot be found§8..."));
-                    return;
-                }
-
-                SubCommand subCommand = getCommandHandlerByName(subCommandArg);
-                subCommand.apply(player, args);
-
+            if(getCommandHandlerByName(subCommandArg) == null){
+                player.sendMessage(Component.text("§7This command cannot be found§8..."));
+                return;
             }
+
+            SubCommand subCommand = getCommandHandlerByName(subCommandArg);
+            subCommand.apply(player, args);
 
         }
 
@@ -67,7 +68,8 @@ public class CloudCommand implements SimpleCommand {
         return suggestions;
     }
 
-    public void register(Class<? extends SubCommand>... command) {
+    @SafeVarargs
+    public final void register(Class<? extends SubCommand>... command) {
         try {
             for (Class<? extends SubCommand> aClass : command) {
                 subCommands.put(aClass.getAnnotation(Command.class), aClass.getDeclaredConstructor().newInstance());

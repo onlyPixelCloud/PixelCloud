@@ -49,7 +49,7 @@ public class ModuleInitializer {
 
                 CloudMaster.getInstance().getCloudLogger().success("Module §c" + name + " §rby §e" + Arrays.toString(authors) + " §rwas added to cloud!");
 
-                CloudMaster.getInstance().getModuleHandler().getModules().add(new PixelModule(name, version, authors, module.groupType()));
+                CloudMaster.getInstance().getModuleHandler().getModules().add(new PixelModule(name, version, authors, module.groupType(), file));
 
             }
 

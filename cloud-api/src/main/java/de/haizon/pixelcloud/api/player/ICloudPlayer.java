@@ -42,6 +42,6 @@ public interface ICloudPlayer {
 
     JSONObject getProperties();
 
-    UUID getUniqueId();
+    String getUniqueId();
 
 }

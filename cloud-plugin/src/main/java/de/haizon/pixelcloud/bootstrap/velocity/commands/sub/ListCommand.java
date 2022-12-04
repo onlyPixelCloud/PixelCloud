@@ -3,7 +3,6 @@ package de.haizon.pixelcloud.bootstrap.velocity.commands.sub;
 import com.velocitypowered.api.proxy.Player;
 import de.haizon.pixelcloud.CloudPlugin;
 import de.haizon.pixelcloud.api.commands.Command;
-import de.haizon.pixelcloud.api.player.ICloudPlayer;
 import de.haizon.pixelcloud.api.services.status.CloudServiceStatus;
 import de.haizon.pixelcloud.bootstrap.velocity.commands.interfaces.SubCommand;
 import net.kyori.adventure.text.Component;
@@ -22,9 +21,6 @@ public class ListCommand implements SubCommand {
 
         if(args.length == 1){
             if(args[0].equalsIgnoreCase("list")){
-
-                ICloudPlayer cloudPlayer = CloudPlugin.getInstance().getCloudPlayerManager().getCloudPlayer(player.getUniqueId());
-                cloudPlayer.connect(CloudPlugin.getInstance().getCloudServiceImplementation().getCloudServices().stream().filter(cloudService -> cloudService.getName().equalsIgnoreCase("Lobby-2")).findFirst().orElse(null));
 
                 player.sendMessage(Component.text());
                 CloudPlugin.getInstance().getCloudGroupImplementation().getCloudGroups().forEach(iCloudGroup -> {

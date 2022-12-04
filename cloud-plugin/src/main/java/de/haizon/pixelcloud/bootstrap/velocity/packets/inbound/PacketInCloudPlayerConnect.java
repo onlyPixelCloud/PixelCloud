@@ -1,4 +1,4 @@
-package de.haizon.pixelcloud.bootstrap.velocity.packets;
+package de.haizon.pixelcloud.bootstrap.velocity.packets.inbound;
 
 import de.haizon.pixelcloud.api.packets.Packet;
 import de.haizon.pixelcloud.api.packets.PacketType;
@@ -15,9 +15,9 @@ import java.util.UUID;
  *
  * @author Haizoooon (maxhewa@gmail.com)
  */
-public class PacketINCloudPlayerConnect extends PacketReceiveFunction {
+public class PacketInCloudPlayerConnect extends PacketReceiveFunction {
 
-    public PacketINCloudPlayerConnect() {
+    public PacketInCloudPlayerConnect() {
         super(PacketType.PLAYER_CONNECT_TO_SERVICE.name());
     }
 
@@ -28,8 +28,6 @@ public class PacketINCloudPlayerConnect extends PacketReceiveFunction {
 
         String uniqueId = jsonObject.getString("uniqueId");
         String service = jsonObject.getString("service");
-
-        System.out.println(service + " : " + uniqueId);
 
         Objects.requireNonNull(VelocityBootstrap.getInstance().getProxyServer().getPlayer(UUID.fromString(uniqueId)).orElse(null)).createConnectionRequest(VelocityBootstrap.getInstance().getProxyServer().getServer(service).orElse(null)).connect();
 

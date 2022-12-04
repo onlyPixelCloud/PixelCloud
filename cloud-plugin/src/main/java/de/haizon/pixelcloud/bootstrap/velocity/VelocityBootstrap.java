@@ -2,7 +2,6 @@ package de.haizon.pixelcloud.bootstrap.velocity;
 
 import com.google.inject.Inject;
 import com.velocitypowered.api.command.CommandManager;
-import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
@@ -11,7 +10,7 @@ import com.velocitypowered.api.proxy.server.ServerInfo;
 import de.haizon.pixelcloud.CloudPlugin;
 import de.haizon.pixelcloud.bootstrap.velocity.commands.CloudCommand;
 import de.haizon.pixelcloud.bootstrap.velocity.events.ConnectEvents;
-import de.haizon.pixelcloud.bootstrap.velocity.packets.PacketINCloudPlayerConnect;
+import de.haizon.pixelcloud.bootstrap.velocity.packets.inbound.PacketInCloudPlayerConnect;
 import de.haizon.pixelcloud.packets.receiver.ServiceConnectedReceive;
 import org.slf4j.Logger;
 
@@ -41,7 +40,7 @@ public class VelocityBootstrap {
         new CloudPlugin();
 
         CloudPlugin.getInstance().getPacketFunction().registerPacketReceiver(new ServiceConnectedReceive());
-        CloudPlugin.getInstance().getPacketFunction().registerPacketReceiver(new PacketINCloudPlayerConnect());
+        CloudPlugin.getInstance().getPacketFunction().registerPacketReceiver(new PacketInCloudPlayerConnect());
 
         registerFallback();
     }

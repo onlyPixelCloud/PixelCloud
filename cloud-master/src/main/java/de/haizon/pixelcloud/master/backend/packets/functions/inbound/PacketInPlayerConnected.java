@@ -1,6 +1,5 @@
-package de.haizon.pixelcloud.master.backend.packets.functions;
+package de.haizon.pixelcloud.master.backend.packets.functions.inbound;
 
-import de.haizon.pixelcloud.api.packets.CloudPacket;
 import de.haizon.pixelcloud.api.packets.Packet;
 import de.haizon.pixelcloud.api.packets.PacketType;
 import de.haizon.pixelcloud.api.packets.abstracts.PacketReceiveFunction;
@@ -13,19 +12,17 @@ import org.json.JSONObject;
  *
  * @author Haizoooon (maxhewa@gmail.com)
  */
-public class PacketInAndOutSendBackToClient extends PacketReceiveFunction {
+public class PacketInPlayerConnected extends PacketReceiveFunction {
 
-    public PacketInAndOutSendBackToClient() {
-        super(PacketType.SEND_BACK_TO_CLIENT.name());
+    public PacketInPlayerConnected() {
+        super(PacketType.PLAYER_CONNECTED.name());
     }
 
     @Override
     public void received(Packet packet) {
-
         JSONObject jsonObject = (JSONObject) packet.content;
 
-        CloudPacket<JSONObject> cloudPacket = new CloudPacket<>(jsonObject.getString("backType"), jsonObject);
-        CloudMaster.getInstance().getPacketFunction().sendPacket(cloudPacket);
+        CloudMaster.getInstance().getCloudLogger().info("Player " + jsonObject.getString("name") + " connected on " + jsonObject.getString("service") + ". [" + jsonObject.getString("uniqueId") + "/" + jsonObject.getString("address") + "]");
 
     }
 }

@@ -1,4 +1,4 @@
-package de.haizon.pixelcloud.master.backend.packets.functions;
+package de.haizon.pixelcloud.master.backend.packets.functions.inbound;
 
 import de.haizon.pixelcloud.api.packets.Packet;
 import de.haizon.pixelcloud.api.packets.PacketType;
@@ -12,17 +12,16 @@ import org.json.JSONObject;
  *
  * @author Haizoooon (maxhewa@gmail.com)
  */
-public class PacketINPlayerConnected extends PacketReceiveFunction {
+public class PacketInPlayerDisconnect extends PacketReceiveFunction {
 
-    public PacketINPlayerConnected() {
-        super(PacketType.PLAYER_CONNECTED.name());
+    public PacketInPlayerDisconnect() {
+        super(PacketType.PLAYER_DISCONNECTED.name());
     }
 
     @Override
     public void received(Packet packet) {
         JSONObject jsonObject = (JSONObject) packet.content;
 
-        CloudMaster.getInstance().getCloudLogger().info("Player " + jsonObject.getString("name") + " connected on " + jsonObject.getString("service") + ". [" + jsonObject.getString("uniqueId") + "/" + jsonObject.getString("address") + "]");
-
+        CloudMaster.getInstance().getCloudLogger().info("Player " + jsonObject.getString("name") + " disconnected on.  [" + jsonObject.getString("uniqueId") + "]");
     }
 }

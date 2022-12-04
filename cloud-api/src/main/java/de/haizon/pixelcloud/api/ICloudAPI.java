@@ -7,4 +7,7 @@ package de.haizon.pixelcloud.api;
  * @author Haizoooon (maxhewa@gmail.com)
  */
 public interface ICloudAPI {
+
+
+
 }

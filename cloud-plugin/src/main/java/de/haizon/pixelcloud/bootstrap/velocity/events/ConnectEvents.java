@@ -1,6 +1,7 @@
 package de.haizon.pixelcloud.bootstrap.velocity.events;
 
 import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.player.ServerPreConnectEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
@@ -74,6 +75,12 @@ public class ConnectEvents {
         CloudPlugin.getInstance().getCloudPlayerManager().register(player.getUniqueId());
         event.setResult(ServerPreConnectEvent.ServerResult.allowed(serverInfo));
 
+    }
+
+    @Subscribe
+    public void handle(DisconnectEvent event){
+        CloudPacket<JSONObject> cloudPacket = new CloudPacket<>(PacketType.PLAYER_DISCONNECTED.name(), new JSONObject().put("uniqueId", event.getPlayer().getUniqueId()).put("name", event.getPlayer().getUsername()));
+        CloudPlugin.getInstance().getPacketFunction().sendPacket(cloudPacket);
     }
 
 }
